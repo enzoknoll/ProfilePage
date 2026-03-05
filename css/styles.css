@@ -1,7 +1,13 @@
 /* --- ESTILOS GENERALES DE LA PÁGINA --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f7f9fc;
+    /* Opción A: Un degradado moderno */
+    /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
+    
+    /* Opción B: Una imagen (descomenta la línea de abajo si prefieres imagen) */
+    background: url('../assets/img/image.jpg') no-repeat center center fixed;
+    
+    background-size: cover;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,61 +19,81 @@ body {
 .diagram-container {
     position: relative;
     width: 1200px;
-    height: 700px;
-    background-color: #fff;
+    height: 770px;
+    
+    /* --- EFECTO GLASSMORPHISM --- */
+    background: rgba(255, 255, 255, 0.15); /* Color blanco con 15% de opacidad */
+    backdrop-filter: blur(15px);           /* El "secreto": desenfoca el fondo */
+    -webkit-backdrop-filter: blur(15px);    /* Compatibilidad para Safari */
+    
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Borde blanco muy fino y suave */
+    /* ---------------------------- */
+
     padding: 30px;
     box-sizing: border-box;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3); /* Sombra más profunda para dar relieve */
 }
 
 .diagram-title {
     text-align: center;
     margin-top: 0;
-    color: #333;
+    color: #ffffff; /* Cambiado a blanco para resaltar sobre el vidrio */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra suave para legibilidad */
     font-size: 24px;
 }
 
-/* --- CUADROS INDIVIDUALES --- */
+/* --- TARJETAS INDIVIDUALES --- */
 .diagram-item {
     position: absolute;
-    width: 160px;
-    height: 100px;
+    width: 240px;
+    height: 150px;
     border: 2px solid #333;
     border-radius: 12px;
     overflow: hidden;
     display: block;
-    transition: all 0.3s ease;
+    /* Aplicamos la transición a toda la tarjeta */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     z-index: 2;
     text-decoration: none;
 }
 
+/* Efecto Hover General (para las que no tienen transform previo) */
 .diagram-item:hover {
+    transform: scale(1.1); /* Zoom de la tarjeta entera */
     border-color: #007bff;
-    box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+    box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+    z-index: 10; /* Asegura que la tarjeta que crece se vea por encima de las demás */
 }
 
-/* --- IMAGEN Y ZOOM --- */
+/* --- IMAGEN (Sin zoom interno) --- */
 .diagram-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.4s ease;
+    /* Eliminamos la transición y el transform de aquí */
 }
 
-.diagram-item:hover img {
-    transform: scale(1.15);
+/* --- POSICIONAMIENTO Y HOVERS ESPECÍFICOS --- */
+/* Tarjetas con transform horizontal (Center X) */
+.pos-t { top: 5%; left: 50%; transform: translateX(-50%); }
+.pos-b { bottom: 5%; left: 50%; transform: translateX(-50%); }
+
+.pos-t:hover, .pos-b:hover { 
+    transform: translateX(-50%) scale(1.1); 
 }
 
-/* --- POSICIONAMIENTO --- */
-.pos-t { top: 0; left: 50%; transform: translateX(-50%); }
-.pos-b { bottom: 0; left: 50%; transform: translateX(-50%); }
+/* Tarjetas con posicionamiento simple (sin transform previo) */
+.pos-tl { top: 15%; left: 15%; }
+.pos-bl { bottom: 15%; left: 15%; }
+.pos-tr { top: 15%; right: 15%; }
+.pos-br { bottom: 15%; right: 15%; }
 
-.pos-tl { top: 15%; left: 10%; }
-.pos-ml { top: 50%; left: 0; transform: translateY(-50%); }
-.pos-bl { bottom: 15%; left: 10%; }
+/* Tarjetas con transform vertical (Center Y) */
+.pos-ml { top: 50%; left: 5%; transform: translateY(-50%); }
+.pos-mr { top: 50%; right: 5%; transform: translateY(-50%); }
 
-.pos-tr { top: 15%; right: 10%; }
-.pos-mr { top: 50%; right: 0; transform: translateY(-50%); }
-.pos-br { bottom: 15%; right: 10%; }
+.pos-ml:hover, .pos-mr:hover { 
+    transform: translateY(-50%) scale(1.1); 
+}
