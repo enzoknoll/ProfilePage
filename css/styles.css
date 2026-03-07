@@ -1,8 +1,10 @@
-/* --- CONFIGURACIÓN DE VIEW TRANSITIONS (Hero Effect) --- */
+/* --- CONFIGURACIÓN DE VIEW TRANSITIONS --- */
+/* 1. Habilitamos la transición automática */
 @view-transition {
     navigation: auto;
 }
 
+/* 2. Suavizamos la duración genérica */
 ::view-transition-group(*) {
     animation-duration: 0.8s;
     animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
@@ -19,11 +21,19 @@
 @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
 @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
 
+/* --- TRUCO MAESTRO: EVITAR QUE LA IMAGEN SE DEFORME AL VOLAR --- */
+/* Le decimos a la "foto" de la transición que respete las proporciones */
+::view-transition-old(hero-tarjeta-1),
+::view-transition-new(hero-tarjeta-1) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* --- ESTILOS GENERALES DE LA PÁGINA --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Opción B: Una imagen */
-    background: url('../assets/img/image.jpg') no-repeat center center fixed;
+    background: url('../assets/img/image.webp') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -69,6 +79,14 @@ body {
     text-decoration: none;
 }
 
+/* --- ESTABILIZADOR: CONGELA EL HOVER AL HACER CLIC --- */
+/* Esto evita el 90% de los fallos al cambiar de página */
+.diagram-item:active,
+.diagram-item:active * {
+    transition: none !important;
+}
+
+/* Imagen principal (Fondo de la tarjeta) */
 .diagram-item > img {
     position: absolute;
     top: 0;
@@ -76,56 +94,72 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 1; /* La enviamos al fondo de la tarjeta */
+    z-index: 1;
+    
+    /* Candados de seguridad para la transición */
+    contain: paint layout;
+    will-change: transform;
 }
 
+/* Gradiente Oscuro */
 .diagram-item::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  height: 100%;
-  width: 100%;
-  background-image: linear-gradient(
-    to bottom,
-    transparent 10%,
-    rgba(0, 0, 0, 0.5) 50%,
-    rgba(0, 0, 0) 95%
-  );
-  opacity: 0;
-  transition: all 0.3s ease;
-  pointer-events: none; /* Asegura que el click funcione */
-  z-index: 2;
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0; /* Agregado para seguridad */
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient(
+        to bottom,
+        transparent 10%,
+        rgba(0, 0, 0, 0.5) 50%,
+        rgba(0, 0, 0) 95%
+    );
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 2;
 }
 
 .diagram-item:hover::before {
     opacity: 1;
 }
 
-/*Prueba tarjeta internas*/
+/* Contenedor de las tarjetas internas para asegurar clics */
+.diagram-item article {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Tarjetas internas (animación) */
 article img {
-  position: absolute;
-  width: 100px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  transform: translateY(70%) rotate(90deg) scale(0.1);
-  transition: 0.5s ease;
-  opacity: 0;
-  z-index: 3;
+    position: absolute;
+    width: 100px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    transform: translateY(70%) rotate(90deg) scale(0.1);
+    transition: 0.5s ease;
+    opacity: 0;
 }
 
 .diagram-item:hover article img:first-child {
-  opacity: 1;
-  transform: translateY(40%) translateX(-15%) rotate(65deg) scale(0.35);
+    opacity: 1;
+    transform: translateY(40%) translateX(-15%) rotate(65deg);
 }
 .diagram-item:hover article img:nth-child(2) {
-  opacity: 1;
-  transform: translateY(30%) rotate(90deg) scale(0.35);
+    opacity: 1;
+    transform: translateY(30%) rotate(90deg);
 }
 .diagram-item:hover article img:last-child {
-  opacity: 1;
-  transform: translateY(40%) translateX(15%) rotate(115deg) scale(0.35);
+    opacity: 1;
+    transform: translateY(40%) translateX(15%) rotate(115deg);
 }
 
 /* Efecto Hover General */
@@ -134,14 +168,6 @@ article img {
     border-color: #007bff;
     box-shadow: 0 10px 20px rgba(0,123,255,0.3);
     z-index: 10; 
-}
-
-/* --- IMAGEN (Sin zoom interno) --- */
-.diagram-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
 }
 
 /* 1. Tarjetas con centrado horizontal (X) */
@@ -188,6 +214,10 @@ article img {
     height: 100vh;
     object-fit: cover;
     z-index: -1; 
+    
+    /* Candados de seguridad vitales para volver al index */
+    contain: paint layout;
+    will-change: transform;
 }
 
 .contenido-pagina {
