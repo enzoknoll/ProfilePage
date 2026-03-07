@@ -1,16 +1,37 @@
 /* --- CONFIGURACIÓN DE VIEW TRANSITIONS --- */
 /* 1. Habilitamos la transición automática */
-@view-transition {
+/*@view-transition {
     navigation: auto;
 }
 
 /* 2. Suavizamos la duración genérica */
 ::view-transition-group(*) {
     animation-duration: 0.8s;
-    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-::view-transition-old(root) {
+/* --- ELIMINAR EL EFECTO FANTASMA DE LA IMAGEN HERO --- */
+
+/* 1. Evitamos que el navegador mezcle los colores (blend) haciéndolos translúcidos */
+::view-transition-old(hero-tarjeta-1),
+::view-transition-new(hero-tarjeta-1) {
+    mix-blend-mode: normal;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 2. Ocultamos la "foto vieja" (la pequeña) instantáneamente */
+::view-transition-old(hero-tarjeta-1) {
+    opacity: 0 !important;
+    animation: none !important;
+}
+
+/* 3. Mantenemos la "foto nueva" (la gigante) 100% sólida durante todo el viaje */
+::view-transition-new(hero-tarjeta-1) {
+    opacity: 1 !important;
+    animation: none !important;
+}
+
+/*::view-transition-old(root) {
     animation: fade-out 0.4s forwards;
 }
 
@@ -81,7 +102,7 @@ body {
 
 /* --- ESTABILIZADOR: CONGELA EL HOVER AL HACER CLIC --- */
 /* Esto evita el 90% de los fallos al cambiar de página */
-.diagram-item:active,
+/*.diagram-item:active,
 .diagram-item:active * {
     transition: none !important;
 }
