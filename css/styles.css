@@ -1,60 +1,30 @@
 /* --- CONFIGURACIÓN DE VIEW TRANSITIONS --- */
-/* 1. Habilitamos la transición automática */
-/*@view-transition {
-    navigation: auto;
-}
-
-/* 2. Suavizamos la duración genérica */
 ::view-transition-group(*) {
     animation-duration: 0.8s;
 }
 
-/* --- ELIMINAR EL EFECTO FANTASMA DE LA IMAGEN HERO --- */
-
-/* 1. Evitamos que el navegador mezcle los colores (blend) haciéndolos translúcidos */
 ::view-transition-old(hero-tarjeta-1),
 ::view-transition-new(hero-tarjeta-1) {
     mix-blend-mode: normal;
     height: 100%;
     object-fit: cover;
+    width: 100%;
 }
 
-/* 2. Ocultamos la "foto vieja" (la pequeña) instantáneamente */
 ::view-transition-old(hero-tarjeta-1) {
     opacity: 0 !important;
     animation: none !important;
 }
 
-/* 3. Mantenemos la "foto nueva" (la gigante) 100% sólida durante todo el viaje */
 ::view-transition-new(hero-tarjeta-1) {
     opacity: 1 !important;
     animation: none !important;
 }
 
-/*::view-transition-old(root) {
-    animation: fade-out 0.4s forwards;
-}
-
-::view-transition-new(root) {
-    animation: fade-in 0.8s forwards;
-}
-
-@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
-@keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
-
-/* --- TRUCO MAESTRO: EVITAR QUE LA IMAGEN SE DEFORME AL VOLAR --- */
-/* Le decimos a la "foto" de la transición que respete las proporciones */
-::view-transition-old(hero-tarjeta-1),
-::view-transition-new(hero-tarjeta-1) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
 /* --- ESTILOS GENERALES DE LA PÁGINA --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('../assets/img/image.webp') no-repeat center center fixed;
+    background: url('../assets/img/flat-lay-workstation-with-copy-space-laptop.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -86,29 +56,39 @@ body {
     font-size: 24px;
 }
 
-/* --- TARJETAS INDIVIDUALES --- */
+/* --- TARJETAS INDIVIDUALES (CONTENEDOR PADRE) --- */
 .diagram-item {
     position: absolute;
     width: 240px;
     height: 150px;
+    display: block;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 2;
+    text-decoration: none;
+    
+    /* Configuración para el 3D interactivo */
+    perspective: 1000px;
+    --rotate-x: 0deg;
+    --rotate-y: 0deg;
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+}
+
+/* NUEVO: Contenedor interno que rota y contiene la imagen */
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
     border: 2px solid #333;
     border-radius: 12px;
     overflow: hidden;
-    display: block;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    z-index: 2;
-    text-decoration: none;
-}
-
-/* --- ESTABILIZADOR: CONGELA EL HOVER AL HACER CLIC --- */
-/* Esto evita el 90% de los fallos al cambiar de página */
-/*.diagram-item:active,
-.diagram-item:active * {
-    transition: none !important;
+    transform-style: preserve-3d;
+    transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y));
+    transition: transform 0.1s ease-out, border-color 0.3s ease;
 }
 
 /* Imagen principal (Fondo de la tarjeta) */
-.diagram-item > img {
+.card-inner > img {
     position: absolute;
     top: 0;
     left: 0;
@@ -116,18 +96,16 @@ body {
     height: 100%;
     object-fit: cover;
     z-index: 1;
-    
-    /* Candados de seguridad para la transición */
     contain: paint layout;
     will-change: transform;
 }
 
 /* Gradiente Oscuro */
-.diagram-item::before {
+.card-inner::before {
     content: "";
     position: absolute;
     bottom: 0;
-    left: 0; /* Agregado para seguridad */
+    left: 0;
     height: 100%;
     width: 100%;
     background-image: linear-gradient(
@@ -142,22 +120,40 @@ body {
     z-index: 2;
 }
 
-.diagram-item:hover::before {
+.diagram-item:hover .card-inner::before {
     opacity: 1;
 }
 
-/* Contenedor de las tarjetas internas para asegurar clics */
-.diagram-item article {
+/* NUEVO: Efecto de Luz direccional */
+.circleLight {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.2), transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
     z-index: 3;
+}
+
+.diagram-item:hover .circleLight {
+    opacity: 1;
+}
+
+/* Contenedor de las tarjetas internas para asegurar clics */
+.card-inner article {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
     pointer-events: none;
 }
 
-/* Tarjetas internas (animación) */
+/* Tarjetas internas (animación del hover) */
 article img {
     position: absolute;
     width: 100px;
@@ -183,12 +179,15 @@ article img {
     transform: translateY(40%) translateX(15%) rotate(115deg);
 }
 
-/* Efecto Hover General */
+/* Efecto Hover General (Escala y borde) */
 .diagram-item:hover {
     transform: scale(1.1); 
-    border-color: #007bff;
     box-shadow: 0 10px 20px rgba(0,123,255,0.3);
     z-index: 10; 
+}
+
+.diagram-item:hover .card-inner {
+    border-color: #007bff;
 }
 
 /* 1. Tarjetas con centrado horizontal (X) */
@@ -197,7 +196,6 @@ article img {
 
 .pos-t:hover, .pos-b:hover { 
     transform: translateX(-50%) scale(1.5); 
-    border-color: #007bff;
     box-shadow: 0 10px 20px rgba(0,123,255,0.3);
     z-index: 10;
 }
@@ -210,7 +208,6 @@ article img {
 
 .pos-tl:hover, .pos-bl:hover, .pos-tr:hover, .pos-br:hover {
     transform: scale(1.5);
-    border-color: #007bff;
     box-shadow: 0 10px 20px rgba(0,123,255,0.3);
     z-index: 10;
 }
@@ -221,7 +218,6 @@ article img {
 
 .pos-ml:hover, .pos-mr:hover { 
     transform: translateY(-50%) scale(1.5); 
-    border-color: #007bff;
     box-shadow: 0 10px 20px rgba(0,123,255,0.3);
     z-index: 10;
 }
@@ -235,8 +231,6 @@ article img {
     height: 100vh;
     object-fit: cover;
     z-index: -1; 
-    
-    /* Candados de seguridad vitales para volver al index */
     contain: paint layout;
     will-change: transform;
 }
