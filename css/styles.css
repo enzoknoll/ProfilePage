@@ -1,12 +1,29 @@
+/* --- CONFIGURACIÓN DE VIEW TRANSITIONS (Hero Effect) --- */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-group(*) {
+    animation-duration: 0.8s;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+::view-transition-old(root) {
+    animation: fade-out 0.4s forwards;
+}
+
+::view-transition-new(root) {
+    animation: fade-in 0.8s forwards;
+}
+
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+
 /* --- ESTILOS GENERALES DE LA PÁGINA --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    /* Opción A: Un degradado moderno */
-    /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
-    
-    /* Opción B: Una imagen (descomenta la línea de abajo si prefieres imagen) */
+    /* Opción B: Una imagen */
     background: url('../assets/img/image.jpg') no-repeat center center fixed;
-    
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -20,26 +37,21 @@ body {
     position: relative;
     width: 1200px;
     height: 770px;
-    
-    /* --- EFECTO GLASSMORPHISM --- */
-    background: rgba(255, 255, 255, 0.15); /* Color blanco con 15% de opacidad */
-    backdrop-filter: blur(15px);           /* El "secreto": desenfoca el fondo */
-    -webkit-backdrop-filter: blur(15px);    /* Compatibilidad para Safari */
-    
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Borde blanco muy fino y suave */
-    /* ---------------------------- */
-
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(15px);           
+    -webkit-backdrop-filter: blur(15px);    
+    border: 1px solid rgba(255, 255, 255, 0.2); 
     padding: 30px;
     box-sizing: border-box;
     border-radius: 20px;
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3); /* Sombra más profunda para dar relieve */
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3); 
 }
 
 .diagram-title {
     text-align: center;
     margin-top: 0;
-    color: #ffffff; /* Cambiado a blanco para resaltar sobre el vidrio */
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Sombra suave para legibilidad */
+    color: #ffffff; 
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2); 
     font-size: 24px;
 }
 
@@ -52,18 +64,76 @@ body {
     border-radius: 12px;
     overflow: hidden;
     display: block;
-    /* Aplicamos la transición a toda la tarjeta */
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     z-index: 2;
     text-decoration: none;
 }
 
-/* Efecto Hover General (para las que no tienen transform previo) */
+.diagram-item > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1; /* La enviamos al fondo de la tarjeta */
+}
+
+.diagram-item::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    transparent 10%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0) 95%
+  );
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none; /* Asegura que el click funcione */
+  z-index: 2;
+}
+
+.diagram-item:hover::before {
+    opacity: 1;
+}
+
+/*Prueba tarjeta internas*/
+article img {
+  position: absolute;
+  width: 100px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  transform: translateY(70%) rotate(90deg) scale(0.1);
+  transition: 0.5s ease;
+  opacity: 0;
+  z-index: 3;
+}
+
+.diagram-item:hover article img:first-child {
+  opacity: 1;
+  transform: translateY(40%) translateX(-15%) rotate(65deg) scale(0.35);
+}
+.diagram-item:hover article img:nth-child(2) {
+  opacity: 1;
+  transform: translateY(30%) rotate(90deg) scale(0.35);
+}
+.diagram-item:hover article img:last-child {
+  opacity: 1;
+  transform: translateY(40%) translateX(15%) rotate(115deg) scale(0.35);
+}
+
+/* Efecto Hover General */
 .diagram-item:hover {
-    transform: scale(1.1); /* Zoom de la tarjeta entera */
+    transform: scale(1.1); 
     border-color: #007bff;
     box-shadow: 0 10px 20px rgba(0,123,255,0.3);
-    z-index: 10; /* Asegura que la tarjeta que crece se vea por encima de las demás */
+    z-index: 10; 
 }
 
 /* --- IMAGEN (Sin zoom interno) --- */
@@ -72,28 +142,56 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
-    /* Eliminamos la transición y el transform de aquí */
 }
 
-/* --- POSICIONAMIENTO Y HOVERS ESPECÍFICOS --- */
-/* Tarjetas con transform horizontal (Center X) */
+/* 1. Tarjetas con centrado horizontal (X) */
 .pos-t { top: 5%; left: 50%; transform: translateX(-50%); }
 .pos-b { bottom: 5%; left: 50%; transform: translateX(-50%); }
 
 .pos-t:hover, .pos-b:hover { 
-    transform: translateX(-50%) scale(1.1); 
+    transform: translateX(-50%) scale(1.5); 
+    border-color: #007bff;
+    box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+    z-index: 10;
 }
 
-/* Tarjetas con posicionamiento simple (sin transform previo) */
+/* 2. Tarjetas con posicionamiento simple */
 .pos-tl { top: 15%; left: 15%; }
 .pos-bl { bottom: 15%; left: 15%; }
 .pos-tr { top: 15%; right: 15%; }
 .pos-br { bottom: 15%; right: 15%; }
 
-/* Tarjetas con transform vertical (Center Y) */
+.pos-tl:hover, .pos-bl:hover, .pos-tr:hover, .pos-br:hover {
+    transform: scale(1.5);
+    border-color: #007bff;
+    box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+    z-index: 10;
+}
+
+/* 3. Tarjetas con centrado vertical (Y) */
 .pos-ml { top: 50%; left: 5%; transform: translateY(-50%); }
 .pos-mr { top: 50%; right: 5%; transform: translateY(-50%); }
 
 .pos-ml:hover, .pos-mr:hover { 
-    transform: translateY(-50%) scale(1.1); 
+    transform: translateY(-50%) scale(1.5); 
+    border-color: #007bff;
+    box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+    z-index: 10;
+}
+
+/* --- NUEVAS CLASES PARA LAS PÁGINAS DESTINO --- */
+.fondo-pantalla {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1; 
+}
+
+.contenido-pagina {
+    position: relative;
+    z-index: 10;
+    color: white;
 }
