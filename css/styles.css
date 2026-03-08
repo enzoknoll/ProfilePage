@@ -24,7 +24,7 @@
 /* --- ESTILOS GENERALES DE LA PÁGINA --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('../assets/img/flat-lay-workstation-with-copy-space-laptop.jpg') no-repeat center center fixed;
+    background: url('../assets/img/bg3.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -39,7 +39,7 @@ body {
     width: 1200px;
     height: 770px;
     background: rgba(255, 255, 255, 0.15); 
-    backdrop-filter: blur(15px);           
+    backdrop-filter: blur(7px);           
     -webkit-backdrop-filter: blur(15px);    
     border: 1px solid rgba(255, 255, 255, 0.2); 
     padding: 30px;
